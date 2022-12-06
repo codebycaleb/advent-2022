@@ -15,3 +15,9 @@ path = "src/lib.rs"
 [[bin]]
 name = "advent_bin"
 path = "src/bin.rs"
+
+[profile.dev]
+codegen-units = 1 
+lto = true    
+strip = true  
+panic = "abort" 
