@@ -70,7 +70,7 @@ fn bench(days: std::slice::Iter<'_, DayFn>, num_loops: usize) -> (Vec<String>, D
 
 fn main() {
     #[allow(unused_variables)]
-    let days = [advent::day01::run, advent::day02::run];
+    let days = [advent::day01::run, advent::day02::run, advent::day03::run];
 
     let num_loops = 1;
 
