@@ -146,3 +146,41 @@ pub mod day03 {
         result
     }
 }
+pub mod day04 {
+    use std::fmt::Write;
+
+    pub fn run() -> String {
+        let mut result: String = String::with_capacity(128);
+
+        let file_string = std::fs::read_to_string("data/input_day04.txt").unwrap();
+        let lines = file_string.lines();
+
+        let ranges = lines.map(|line| {
+            line.split(',')
+                .flat_map(|pair| pair.split('-').map(|d| d.parse::<u8>().unwrap()))
+                .collect::<Vec<_>>()
+        });
+
+        let part_2 = ranges.filter(|nums| {
+            if let [first_min, first_max, second_min, second_max] = nums[0..4] {
+                (first_min >= second_min && first_min <= second_max)
+                    || (second_min >= first_min && second_min <= first_max)
+            } else {
+                unimplemented!()
+            }
+        });
+
+        let part_1 = part_2.clone().filter(|nums| {
+            if let [first_min, first_max, second_min, second_max] = nums[0..4] {
+                (first_min >= second_min && first_max <= second_max)
+                    || (second_min >= first_min && second_max <= first_max)
+            } else {
+                unimplemented!()
+            }
+        });
+
+        writeln!(&mut result, "Day 04, Part 1: {}", part_1.count()).unwrap();
+        writeln!(&mut result, "Day 04, Part 2: {}", part_2.count()).unwrap();
+        result
+    }
+}
