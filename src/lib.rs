@@ -1,3 +1,21 @@
+pub mod day00 {
+    use std::fmt::Write;
+
+    pub fn run() -> String {
+        let mut result: String = String::with_capacity(128);
+
+        // let file_string = std::fs::read_to_string("data/input_day0.txt").unwrap();
+        // let lines = file_string.lines();
+
+        let part_1 = "part_1";
+        let part_2 = "part_2";
+
+        writeln!(&mut result, "Day 0, Part 1: {}", part_1).unwrap();
+        writeln!(&mut result, "Day 0, Part 2: {}", part_2).unwrap();
+        result
+    }
+}
+
 pub mod day01 {
     use std::fmt::Write;
 
