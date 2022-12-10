@@ -184,3 +184,70 @@ pub mod day04 {
         result
     }
 }
+pub mod day05 {
+    use std::fmt::Write;
+
+    pub fn run() -> String {
+        let mut result: String = String::with_capacity(128);
+
+        let file_string = std::fs::read_to_string("data/input_day05.txt").unwrap();
+        let mut lines = file_string.lines();
+
+        let drawing: Vec<_> = lines
+            .by_ref()
+            .take_while(|line| !line.starts_with(" 1"))
+            .map(|line| {
+                let mut bytes = line.chars();
+                bytes.next();
+                bytes.step_by(4).collect::<Vec<char>>()
+            })
+            .collect();
+        lines.next(); // discard empty line
+        let instructions: Vec<_> = lines.collect();
+
+        let mut stacks_part_one: Vec<Vec<char>> = Vec::new();
+        let num_stacks = drawing[0].len();
+        for column in 0..num_stacks {
+            let mut stack: Vec<char> = Vec::new();
+            for row in (0..drawing.len()).rev() {
+                let b = drawing[row][column];
+                if b != ' ' {
+                    stack.push(b);
+                }
+            }
+            stacks_part_one.push(stack);
+        }
+
+        let mut stacks_part_two = stacks_part_one.clone();
+
+        for ins in instructions {
+            let mut words = ins.split(" ");
+            words.next();
+            let x: usize = words.next().unwrap().parse().unwrap();
+            words.next();
+            let y: usize = words.next().unwrap().parse().unwrap();
+            words.next();
+            let z: usize = words.next().unwrap().parse().unwrap();
+            for _ in 1..=x {
+                let v: char = stacks_part_one[y - 1].pop().unwrap();
+                stacks_part_one[z - 1].push(v);
+            }
+            let len = stacks_part_two[y - 1].len();
+            let mut slice = stacks_part_two[y - 1].drain(len - x..).collect::<Vec<_>>();
+            stacks_part_two[z - 1].append(&mut slice);
+        }
+
+        let part_1 = stacks_part_one
+            .iter()
+            .map(|s| s[s.len() - 1])
+            .collect::<String>();
+        let part_2 = stacks_part_two
+            .iter()
+            .map(|s| s[s.len() - 1])
+            .collect::<String>();
+
+        writeln!(&mut result, "Day 05, Part 1: {}", part_1).unwrap();
+        writeln!(&mut result, "Day 05, Part 2: {}", part_2).unwrap();
+        result
+    }
+}

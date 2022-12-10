@@ -75,6 +75,7 @@ fn main() {
         advent::day02::run,
         advent::day03::run,
         advent::day04::run,
+        advent::day05::run,
     ];
 
     let num_loops = 1;
