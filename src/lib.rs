@@ -67,28 +67,16 @@ pub mod day02 {
         let file_string = std::fs::read_to_string("data/input_day02.txt").unwrap();
         let lines = file_string.lines();
         let (part_1, part_2): (u16, u16) = lines.clone().fold((0, 0), |(p1, p2), line| {
-            let score1 = match line {
-                "A X" => 4,
-                "A Y" => 8,
-                "A Z" => 3,
-                "B X" => 1,
-                "B Y" => 5,
-                "B Z" => 9,
-                "C X" => 7,
-                "C Y" => 2,
-                "C Z" => 6,
-                _ => unimplemented!(),
-            };
-            let score2 = match line {
-                "A X" => 3,
-                "A Y" => 4,
-                "A Z" => 8,
-                "B X" => 1,
-                "B Y" => 5,
-                "B Z" => 9,
-                "C X" => 2,
-                "C Y" => 6,
-                "C Z" => 7,
+            let (score1, score2) = match line {
+                "A X" => (4, 3),
+                "A Y" => (8, 4),
+                "A Z" => (3, 8),
+                "B X" => (1, 1),
+                "B Y" => (5, 5),
+                "B Z" => (9, 9),
+                "C X" => (7, 2),
+                "C Y" => (2, 6),
+                "C Z" => (6, 7),
                 _ => unimplemented!(),
             };
             (p1 + score1, p2 + score2)
