@@ -37,9 +37,9 @@ pub mod day01 {
                 current += n;
             } else {
                 if current > top_3[0] {
-                    top_3 = [current, top_3[1], top_3[2]];
+                    top_3 = [current, top_3[0], top_3[1]];
                 } else if current > top_3[1] {
-                    top_3 = [top_3[0], current, top_3[2]];
+                    top_3 = [top_3[0], current, top_3[1]];
                 } else if current > top_3[2] {
                     top_3 = [top_3[0], top_3[1], current];
                 }
