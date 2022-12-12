@@ -238,3 +238,47 @@ pub mod day05 {
         result
     }
 }
+pub mod day06 {
+    use std::fmt::Write;
+
+    pub fn run() -> String {
+        let mut result: String = String::with_capacity(128);
+
+        let file_string = std::fs::read_to_string("data/input_day06.txt").unwrap();
+
+        let mut windows = file_string
+            .as_bytes()
+            .windows(14)
+            .enumerate()
+            .filter(|(_i, a)| {
+                a[0] != a[1]
+                    && a[0] != a[2]
+                    && a[0] != a[3]
+                    && a[1] != a[2]
+                    && a[1] != a[3]
+                    && a[2] != a[3]
+            });
+
+        let part_1 = windows.next().unwrap().0 + 4;
+
+        let part_2 = windows
+            .filter(|(_i, a)| {
+                for i in 0..=12 {
+                    for j in (i + 1)..=13 {
+                        if a[i] == a[j] {
+                            return false;
+                        }
+                    }
+                }
+                true
+            })
+            .next()
+            .unwrap()
+            .0
+            + 14;
+
+        writeln!(&mut result, "Day 06, Part 1: {}", part_1).unwrap();
+        writeln!(&mut result, "Day 06, Part 2: {}", part_2).unwrap();
+        result
+    }
+}
