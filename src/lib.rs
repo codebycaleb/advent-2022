@@ -66,7 +66,7 @@ pub mod day02 {
 
         let file_string = std::fs::read_to_string("data/input_day02.txt").unwrap();
         let lines = file_string.lines();
-        let (part_1, part_2): (u16, u16) = lines.clone().fold((0, 0), |(p1, p2), line| {
+        let (part_1, part_2): (u16, u16) = lines.fold((0, 0), |(p1, p2), line| {
             let (score1, score2) = match line {
                 "A X" => (4, 3),
                 "A Y" => (8, 4),
@@ -100,34 +100,31 @@ pub mod day03 {
             .clone()
             .map(|line| {
                 let (h1, h2) = line.split_at(line.len() / 2);
-                let p1 = h1.chars().filter(|c| h2.contains(*c)).next().unwrap();
+                let c = h1.chars().filter(|c| h2.contains(*c)).next().unwrap();
+                let mut p1 = c as u16 ^ 0x60;
+                if p1 > 26 {
+                    p1 -= 6;
+                }
                 (p1, line.as_bytes())
             })
             .unzip();
 
-        let part_1 = part_1_v.iter().fold(0, |s, c| {
-            let mut x = *c as u16 ^ 0x60;
-            if x > 26 {
-                x -= 6;
-            }
-            s + x
-        });
+        let part_1: u16 = part_1_v.iter().sum();
 
-        let part_2 = part_2_v
+        let part_2: u16 = part_2_v
             .chunks(3)
             .map(|set| {
-                set[0]
+                let c = set[0]
                     .iter()
                     .find(|c| set[1].contains(c) && set[2].contains(c))
-                    .unwrap()
-            })
-            .fold(0, |s, c| {
-                let mut x = *c as u16 ^ 0x60;
-                if x > 26 {
-                    x -= 6;
+                    .unwrap();
+                let mut p2 = *c as u16 ^ 0x60;
+                if p2 > 26 {
+                    p2 -= 6;
                 }
-                s + x
-            });
+                p2
+            })
+            .sum();
 
         writeln!(&mut result, "Day 03, Part 1: {}", part_1).unwrap();
         writeln!(&mut result, "Day 03, Part 2: {}", part_2).unwrap();
@@ -144,31 +141,33 @@ pub mod day04 {
         let lines = file_string.lines();
 
         let ranges = lines.map(|line| {
-            line.split(',')
-                .flat_map(|pair| pair.split('-').map(|d| d.parse::<u8>().unwrap()))
-                .collect::<Vec<_>>()
+            let mut numbers = line
+                .split(',')
+                .flat_map(|pair| pair.split('-').map(|d| d.parse::<u8>().unwrap()));
+            [
+                numbers.next().unwrap(),
+                numbers.next().unwrap(),
+                numbers.next().unwrap(),
+                numbers.next().unwrap(),
+            ]
         });
 
-        let part_2 = ranges.filter(|nums| {
-            if let [first_min, first_max, second_min, second_max] = nums[0..4] {
+        let part_2: Vec<_> = ranges
+            .filter(|[first_min, first_max, second_min, second_max]| {
                 (first_min >= second_min && first_min <= second_max)
                     || (second_min >= first_min && second_min <= first_max)
-            } else {
-                unimplemented!()
-            }
-        });
+            })
+            .collect();
 
-        let part_1 = part_2.clone().filter(|nums| {
-            if let [first_min, first_max, second_min, second_max] = nums[0..4] {
+        let part_1 = part_2
+            .iter()
+            .filter(|[first_min, first_max, second_min, second_max]| {
                 (first_min >= second_min && first_max <= second_max)
                     || (second_min >= first_min && second_max <= first_max)
-            } else {
-                unimplemented!()
-            }
-        });
+            });
 
         writeln!(&mut result, "Day 04, Part 1: {}", part_1.count()).unwrap();
-        writeln!(&mut result, "Day 04, Part 2: {}", part_2.count()).unwrap();
+        writeln!(&mut result, "Day 04, Part 2: {}", part_2.len()).unwrap();
         result
     }
 }
@@ -193,10 +192,10 @@ pub mod day05 {
         lines.next(); // discard empty line
         let instructions: Vec<_> = lines.collect();
 
-        let mut stacks_part_one: Vec<Vec<char>> = Vec::new();
+        let mut stacks_part_one: Vec<Vec<char>> = Vec::with_capacity(9);
         let num_stacks = drawing[0].len();
         for column in 0..num_stacks {
-            let mut stack: Vec<char> = Vec::new();
+            let mut stack: Vec<char> = Vec::with_capacity(64);
             for row in (0..drawing.len()).rev() {
                 let b = drawing[row][column];
                 if b != ' ' {
