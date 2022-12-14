@@ -77,14 +77,15 @@ fn main() {
         advent::day04::run,
         advent::day05::run,
         advent::day06::run,
+        advent::day07::run,
     ];
 
     let num_loops = 1;
 
     let result = run_all(days.iter(), num_loops);
-    //let result = run_all_parallel(days.par_iter(), num_loops);
-    //let result = run_one(&advent::day15::run, num_loops);
-    //let result = bench(days.iter(), num_loops);
+    // let result = run_all_parallel(days.par_iter(), num_loops);
+    // let result = run_one(&advent::day06::run, num_loops);
+    // let result = bench(days.iter(), num_loops);
 
     let stdout = io::stdout();
     let mut handle = stdout.lock();

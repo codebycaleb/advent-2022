@@ -282,3 +282,58 @@ pub mod day06 {
         result
     }
 }
+pub mod day07 {
+    use std::fmt::Write;
+
+    pub fn run() -> String {
+        let mut result: String = String::with_capacity(128);
+
+        let file_string = std::fs::read_to_string("data/input_day07.txt").unwrap();
+        let lines = file_string.lines();
+
+        // visited directories with a known final size
+        let mut directories: Vec<u32> = Vec::new();
+
+        // the current working path, final size not known yet
+        let mut working_path: Vec<u32> = Vec::new();
+
+        for line in lines {
+            let mut split = line.split_whitespace();
+            let left = split.next().unwrap(); // every line starts with something: "$", "dir", or a number
+            split.next(); // the second word is either the command ("cd", "ls") or a file / dir name; I don't capture any of these
+            let right = split.next(); // the third word, if present, is the directory name we're changing to (or "..")
+            if left == "$" {
+                // command
+                match right {
+                    Some("..") => directories.push(working_path.pop().unwrap()), // done exploring, move to known directories
+                    Some(_) => working_path.push(0), // otherwise, if a third word is present, it's a new directory; add it to working_path
+                    _ => {} // if there is no third word present, this is an ls command and we can skip it wholesale
+                }
+            } else {
+                // info
+                if let Ok(size) = left.parse::<u32>() {
+                    // if our info starts with a number, it's a file and we care about it
+                    working_path.iter_mut().for_each(|n| *n += size) // add the file size to all directories in working_path
+                }
+            }
+        }
+        // working_path still has values once we reach the end of input, but we know they're fully explored; add them to known directories
+        directories.extend(&working_path);
+
+        let part_1: u32 = directories.iter().filter(|&&n| n < 100_000).sum();
+
+        // the lower bound for part 2 is the difference between the current used space and the maximum allowed used space
+        // the root is still at working_path[0]; the maximum allowed used space is (total disk space - system update space)
+        let lower_bound = working_path[0] - (70000000 - 30000000);
+
+        let part_2 = directories
+            .iter()
+            .filter(|&&n| n >= lower_bound)
+            .min()
+            .unwrap();
+
+        writeln!(&mut result, "Day 07, Part 1: {}", part_1).unwrap();
+        writeln!(&mut result, "Day 07, Part 2: {}", part_2).unwrap();
+        result
+    }
+}
